@@ -1,0 +1,169 @@
+namespace nmwg = "http://ggf.org/ns/nmwg/base/2.0/"
+# namespace owamp = "http://ggf.org/ns/nmwg/tools/owamp/2.0/"
+# Das definiere ich hier einfach mal...statt owamp
+namespace traceroute = "http://ggf.org/ns/nmwg/tools/traceroute/1.0/"
+namespace nmwgtopo3 = "http://ggf.org/ns/nmwg/topology/base/3.0/"
+namespace nmwgt = "http://ggf.org/ns/nmwg/topology/2.0/"
+#Brachen wir eigentlich nicht oder?
+namespace owd = "http://ggf.org/ns/nmwg/characteristic/delay/one-way/20070914/"
+namespace summary = "http://ggf.org/ns/nmwg/characteristic/delay/summary/20070921/"
+
+include "nmtopo.rnc"
+include "nmtopo_ver3.rnc"
+include "result.rnc"
+include "ippm.rnc" {
+        Metadata |= TracerouteMetadata
+        Data |= TracerouteData
+}
+
+
+TracerouteMetadata =
+        element nmwg:metadata {
+                Identifier &
+                MetadataIdentifierRef? &
+                TracerouteMetadataBlocks
+        }
+
+TracerouteMetadataBlock =
+        TracerouteSubject? &
+        TracerouteParameters?
+        
+TracerouteSubject =
+        element traceroute:subject {
+                Identifier &
+                MetadataIdentifierRef? &
+                (
+                        EndpointPair |
+                        Endpoint 
+                )
+        }
+        
+TracerouteParameters =
+        element traceroute:parameters {
+                Identifier &
+                TracerouteParameter+
+        }
+        
+#
+# here are the corresponding parameters of the traceroute tool.
+# see more in the manage of traceroute.
+# TODO: the parameters are ignored in the Traceroute.mp
+#
+TracerouteParameter =
+	element nmwg:parameter {
+		 	attribute name { "output" } &		
+	        (
+		      attribute value { xsd:string } |
+		      xsd:string
+	        ) |
+	        attribute name { "d" } &		
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "F" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "I" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	         attribute name { "T" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "U" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "n" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "r" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "e" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "A" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "V" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "UL" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "D" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "mtu" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+	        attribute name { "back" } &
+	        (
+		      attribute value { xsd:boolean } |
+		      xsd:boolean
+	        ) |
+			attribute name { "first_ttl" | "max_ttl" | "nqueries" | "squeries" | "tos" | "port" | "sport"} &
+			(
+				attribute value { xsd:unsignedInt } |
+				xsd:unsignedInt
+			) |
+			attribute name { "waittime" | "sendwait" | "nqueries" | "squeries" } &
+			(
+				attribute value { xsd:float } |
+				xsd:float
+			)
+			attribute name { "gate" | "device" | "src_addr" | "proto" | "method" | "mod_options" } &
+			(
+				attribute value { xsd:string } |
+				xsd:string
+			)
+        }
+
+#
+# the envelope for the data
+#
+TracerouteData =
+        element nmwg:data {
+                Identifier &
+                MetadataIdentifierRef? &
+				TracerouteDatum*
+        }
+
+#
+# Response Data
+# The responseTimes a separated by whitespace
+#
+TracerouteDatum =
+        element traceroute:datum {
+		attribute hop { xsd:unsignedInt } &
+		(
+			attribute hostname { xsd:string } &
+			attribute hostip { xsd:string } &
+			attribute responseTimes { xsd:list } &
+		) |
+		attribute unknown { xsd:boolean }
+	}
